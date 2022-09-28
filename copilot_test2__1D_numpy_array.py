@@ -1,5 +1,3 @@
-# completely totally funky!!
-
 # import numpy
 import numpy as np
 
