@@ -17,6 +17,7 @@ plt.savefig('sin.png')
 x = np.array([0, 1])
 y = np.array([0, 1])
 
-# take the dot product of x and y
+# take the dot product of x and y (how similar the vectors are)
+# Note that matrix multiplication and dot product are the same thing!
 print(np.dot(x, y))
 
