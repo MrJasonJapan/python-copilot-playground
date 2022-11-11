@@ -60,6 +60,12 @@ def prep_data():
     # create a price-binned column with equal width bins based on low, medium, and high price
     df['price-binned'] = pd.cut(df['price'], 3, labels=['low', 'medium', 'high'])
 
+    # replace any empty values in horsepower with the mean
+    df['horsepower'].replace(np.nan, df['horsepower'].mean(), inplace=True)
+
+    # convert the datatype of horsepower to int
+    df['horsepower'] = df['horsepower'].astype('int')
+    
     # convert the fuel column to dummy variables
     df = pd.concat([df, pd.get_dummies(df['fuel-type'])], axis=1)
 
