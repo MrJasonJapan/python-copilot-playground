@@ -16,6 +16,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+
 
 df = prep_data()
 
@@ -81,4 +83,12 @@ sns.distplot(Yhat, hist=False, color='b', label='Fitted Values', ax=ax1)
 plt.show()
 # * We can see here that Yhat (based on Z = df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']]) is a pretty good fit for the actual values of price, 
 # * because the two distributions overlap farily well.
+
+
+# ---- Polynomial Regression ----
+print('\nPolynomial Regression:\n')
+
+# Create a polynomial regression object
+pr = PolynomialFeatures(degree=2)
+
 
