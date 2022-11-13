@@ -136,7 +136,7 @@ sns.distplot(ypipe, hist=False, color='b', label='Fitted Values', ax=ax1)
 plt.show()
 
 
-# ---- Model Evaluation and Refinement ----
+# ---- Model Evaluation ----
 
 # Two important measures that are often used in Statistics to determine the accuracy of a model are: R^2 and Mean Squared Error (MSE).
 
@@ -186,7 +186,6 @@ print(r2_score(df['price'], ypipe))
 new_input = np.array([[98, 2337, 122, 25]])
 new_output = pipe.predict(new_input)
 print(new_output)
-
 
 
 
