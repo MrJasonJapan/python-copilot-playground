@@ -25,6 +25,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
 
 
 
@@ -132,5 +134,54 @@ plt.clf()
 ax1 = sns.distplot(df['price'], hist=False, color='r', label='Actual Value')
 sns.distplot(ypipe, hist=False, color='b', label='Fitted Values', ax=ax1)
 plt.show()
+
+
+# ---- Model Evaluation and Refinement ----
+
+# Two important measures that are often used in Statistics to determine the accuracy of a model are: R^2 and Mean Squared Error (MSE).
+
+print('\nSimple Linear Regression Model Evaluation:\n')
+
+# first let's see how a simple linear regression model performs on our data.
+X = df[['highway-mpg']]
+Y = df['price']
+lm.fit(X, Y)
+
+# Measure the MSE of the model
+# MSE measures the average of the squares of errors, that is, the difference between actual value (y) and the estimated value (ŷ).
+# MSE is a measure of the quality of an estimator—it is always non-negative, and the closer to zero the better.
+print(mean_squared_error(df['price'], lm.predict(X)))
+
+# Calculate the R^2 of the model
+# R^2 measures the proportion of the variance for a dependent variable that's explained by an independent variable or variables in a regression model.
+# R^2 is always between 0 and 100%:
+# 0% indicates that the model explains none of the variability of the response data around its mean.
+# 100% indicates that the model explains all the variability of the response data around its mean.
+print(lm.score(X, Y))
+
+
+print('\nMultiple Linear Regression Model Evaluation:\n')
+
+Z = df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']]
+lm.fit(Z, df['price'])
+# we can see that the MSE is smaller, and the R^2 is larger, than the simple linear regression model, which means that the multiple linear regression model is a better fit for this data.
+print(mean_squared_error(df['price'], lm.predict(Z)))
+print(lm.score(Z, df['price']))
+
+
+print('\nPolynomial Regression Model Evaluation:\n')
+
+# We can see that polynomial regression also performs better than the simple linear regression model, and the multiple linear regression model.
+print(mean_squared_error(df['price'], ypipe))
+print(r2_score(df['price'], ypipe))
+
+
+
+
+
+
+
+
+
 
 
