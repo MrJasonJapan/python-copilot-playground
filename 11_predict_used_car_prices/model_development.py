@@ -176,6 +176,18 @@ print(mean_squared_error(df['price'], ypipe))
 print(r2_score(df['price'], ypipe))
 
 
+# ---- Model Usage ----
+
+# use our model to predict the price of a car with the following characteristics:
+# horsepower: 98
+# curb-weight: 2337
+# engine-size: 122
+# highway-mpg: 25
+new_input = np.array([[98, 2337, 122, 25]])
+new_output = pipe.predict(new_input)
+print(new_output)
+
+
 
 
 
