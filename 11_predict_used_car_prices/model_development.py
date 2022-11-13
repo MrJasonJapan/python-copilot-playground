@@ -9,6 +9,12 @@
 # y = b0 + b1x1 + b2x2 + b3x3 + ... + bnxn
 # note that y is the predicted value of the target variable, x1, x2, ..., xn are the values of the predictor variables, b0 is the intercept, and b1, b2, ..., bn are the slopes.
 
+# Polynomial regression is useful when the relationship between the independent variable and the dependent variable is not linear.
+# Curvilinear relationships can be modeled using polynomial regression.
+# Quadritic (2nd Order): y = b0 + b1x1 + b2x1^2
+# 2nd Order with more than one independent variable: y = b0 + b1x1 + b2x2 + b3x1^2 + b4x1x2 + b5x2^2
+# Cubic (3rd Order): y = b0 + b1x1 + b2x1^2 + b3x1^3
+# Higher Order: y = b0 + b1x1 + b2x1^2 + b3x1^3 + ... + bnx1^n
 
 from prep_data import prep_data
 import pandas as pd
@@ -17,6 +23,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
 
 
 df = prep_data()
@@ -88,7 +97,40 @@ plt.show()
 # ---- Polynomial Regression ----
 print('\nPolynomial Regression:\n')
 
-# Create a polynomial regression object
-pr = PolynomialFeatures(degree=2)
+# Quick example: calculate polynomial of 3rd order using highway-mpg as the independent variable, and price as the dependent variable
+f = np.polyfit(df['highway-mpg'], df['price'], 3)
+p = np.poly1d(f)
+print(p)
+
+# Create 2nd Order polynomial with more than one independent variable using sklearn.preprocessing.PolynomialFeatures
+pr = PolynomialFeatures(degree=2, include_bias=False)
+# transform based on the horsepower and curb-weight features into a "polynomial feature" object.
+x_polly = pr.fit_transform(df[['horsepower', 'curb-weight']])
+print(x_polly)
+
+# Normalizing (Pre-Processing) example:
+# Normalize the df based on hoursepower highway-mpg using StandardScaler.
+# StandardScaler transforms the data such that its distribution will have a mean value 0 and standard deviation of 1.
+# This is useful for algorithms that assume the data is normally distributed.
+SCALE=StandardScaler()
+SCALE.fit(df[['highway-mpg', 'horsepower']])
+df_scale=SCALE.transform(df[['highway-mpg', 'horsepower']])
+print(df_scale)
+
+# Simplify the process by using a pipeline.
+# Pipelines sequentially apply a list of transforms and a final estimator.
+# One pipeline example: Normalize the data, then perform a polynomial transform, then fit a linear regression model.
+Input=[('scale', StandardScaler()), ('polynomial', PolynomialFeatures(degree=2)), ('model', LinearRegression())]
+pipe=Pipeline(Input)
+# Train the pipeline with horsepower, curb-weight, engine-size, and highway-mpg as the independent variables, and price as the dependent variable.
+pipe.fit(df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']], df['price'])
+# Obtain a prediction
+ypipe=pipe.predict(df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']])
+print(ypipe)
+# Visualize the model. We can see that this model is better than the linear model.
+plt.clf()
+ax1 = sns.distplot(df['price'], hist=False, color='r', label='Actual Value')
+sns.distplot(ypipe, hist=False, color='b', label='Fitted Values', ax=ax1)
+plt.show()
 
 
