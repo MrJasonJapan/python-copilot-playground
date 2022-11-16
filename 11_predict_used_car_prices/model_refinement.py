@@ -36,6 +36,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_val_predict
+from sklearn.linear_model import Ridge
+from sklearn.model_selection import GridSearchCV
 
 df = prep_data()
 
@@ -111,6 +113,38 @@ for n in order:
 
 # * Key takeaway, because we manually cut training and testing data, and used it without cross-validation, We might assume that the R^2 are not optimal.
 # * When we used cross-validation, we usually get a more realistic estimate of the model's accuracy.
-# * Also note that because we used a loop to experiment with different orders, we were able to go back and accordinly adjust the Input degree insisde our pipeline.
+# * Also note that because we used a loop to experiment with different orders, we were able to go back and accordingly adjust the Input degree insisde our pipeline.
 
-# <continue here> test commit
+
+# --- Use ridge regression to see if we can improve the model ---
+print('\n--- Ridge Regression model with horsepower, curb-weight, engine-size, and highway-mpg as features to predict price ---')
+RidgeModel = Ridge(alpha=0.01)
+RidgeModel.fit(df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']], df['price'])
+
+# use cross_val_score to evaluate the model
+RcrossRidge = cross_val_score(RidgeModel, df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']], df['price'], cv=4)
+
+# print the average and the standard deviation of our estimate
+print("The mean of the folds are", RcrossRidge.mean(), "and the standard deviation is", RcrossRidge.std())
+# output with a degree of 3, and no ridge regression: R^2 mean of -11.063572818747476
+# output with a degree of 3, and ridge regression with alpha 0.1: R^2 mean of 0.6644056262129685
+# output with a degree of 3, and ridge regression with alpha 0.01: R^2 mean of 0.6644051006641822
+
+# Use Grid Search to find the best alpha value
+# If we chose to normalize the data, use the parameter normalize': [True, False] 
+# This would bea trying two different settings for the normalization parameter, True or False
+# The benefit of normalization is that it transforms the variables so that they each have the property
+# of a standard normal distribution with a mean of zero and a standard deviation of one.
+# When I tried out normalization on/off (normalize': [True, False]), I got a error, so I left it out.
+paramaeters1 = [{'alpha': [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000]}]
+Grid1 = GridSearchCV(RidgeModel, paramaeters1, cv=4) # the default scoring method is R^2
+Grid1.fit(df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']], df['price'])
+BestRR = Grid1.best_estimator_
+scores = Grid1.cv_results_
+print(scores['mean_test_score'])
+# * We can see that an alpha value of 10000 gives us the best result: 0.67237476.
+# * This is slightly better than the result we got using cross-validation with alpha 0.1: 0.6644056262129685
+# * Notice how GridSearch is similar to cross-validation, in that we can cut the data into folds, and then use different folds for training and testing.
+# * The testing, validation, and testing happens in the background.
+
+# <next>: check out the lab for more on ridge regression
