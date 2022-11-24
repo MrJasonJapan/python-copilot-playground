@@ -132,7 +132,7 @@ print("The mean of the folds are", RcrossRidge.mean(), "and the standard deviati
 
 # Use Grid Search to find the best alpha value
 # If we chose to normalize the data, use the parameter normalize': [True, False] 
-# This would bea trying two different settings for the normalization parameter, True or False
+# This would be trying two different settings for the normalization parameter, True or False.
 # The benefit of normalization is that it transforms the variables so that they each have the property
 # of a standard normal distribution with a mean of zero and a standard deviation of one.
 # When I tried out normalization on/off (normalize': [True, False]), I got a error, so I left it out.
@@ -147,4 +147,4 @@ print(scores['mean_test_score'])
 # * Notice how GridSearch is similar to cross-validation, in that we can cut the data into folds, and then use different folds for training and testing.
 # * The testing, validation, and testing happens in the background.
 
-# <next>: check out the lab for more on ridge regression
+# <next>: check out the lab for more on ridge regression -> The Lab would not start, so I gave up on this.
